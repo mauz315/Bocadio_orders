@@ -48,6 +48,7 @@ df = df.assign(hora_entrega2=pd.Series(h_e).values)  # histogram column
 # Single weekday analysis
 nom = {}
 
+
 def histoday(dataframe, criterio, day):
     v = dataframe.fecha.nunique()
     ddf = pd.DataFrame(dataframe[criterio].value_counts())
@@ -90,4 +91,3 @@ plt.title('Orders by dayWeek')
 # ax.set_ylim([0, ddf[criterio].max()+5])
 plt.savefig('day_orders.png')
 plt.show()
-
