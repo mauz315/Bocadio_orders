@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import calendar
 from datetime import datetime
-
 from pandas import DataFrame
 
 df = pd.read_csv('orders_distrito.csv')
@@ -51,20 +50,19 @@ nom = {}
 
 
 def histoday(dataframe, criterio, day):
-    fig = plt.figure
     v = dataframe.fecha.nunique()
     ddf = pd.DataFrame(dataframe[criterio].value_counts())
     ddf = ddf/v
-    ddf.plot(kind='bar')
     ddf = ddf.assign(percent=ddf/sum(ddf[criterio]))
     globals()['ddf%s_%s' % (day, criterio[0:4])] = ddf
-    plt.xlabel(criterio)
-    # plt.ylabel('Pedidos')
+    fig = plt.figure
+    ddf[criterio].plot(kind='bar')
+    plt.tight_layout()
+    plt.ylabel('# de Pedidos')
     plt.title(nom[day])
     ax = plt.gca()
     ax.set_ylim([0, ddf[criterio].max()+5])
     plt.savefig('graph/%s_by_%s.png' % (nom[day][0:3], criterio[0:4]))
-    plt.tight_layout()
     plt.show()
 
 
@@ -75,5 +73,22 @@ for x in range(0, 7):
     histoday(globals()['df%s' % x], 'distrito', str(x))
 
 # uni = df.fecha.nunique()
-byDay = df.groupby('weekDay')['id_order'].count()
-# df6 = df6.groupby('fecha')['id_order'].count()
+byDay = pd.DataFrame(df.groupby('weekDay')['id_order'].count())
+dayCount = []
+diaNom = []
+for i in byDay.index:
+    dayCount.append(globals()['df%s' % i]['fecha'].nunique())
+    diaNom.append(nom[str(i)])
+byDay = byDay.assign(dias=pd.Series(dayCount))
+byDay = byDay.assign(prom=byDay.id_order/byDay.dias)
+byDay = byDay.assign(dia=pd.Series(diaNom))
+fig = plt.figure
+byDay.plot('dia', 'prom', kind='bar')
+plt.tight_layout()
+plt.ylabel('# de Pedidos')
+plt.title('Orders by dayWeek')
+# ax = plt.gca()
+# ax.set_ylim([0, ddf[criterio].max()+5])
+plt.savefig('day_orders.png')
+plt.show()
+
