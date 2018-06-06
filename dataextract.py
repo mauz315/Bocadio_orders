@@ -39,8 +39,3 @@ plt.grid(True)
 plt.savefig('graph2.png')
 plt.show()
 
-# fig3 = plt.figure
-# df.hist(column="hora_pedido")
-# plt.grid(True)
-# plt.savefig('graph3.png')
-# plt.show()
