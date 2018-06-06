@@ -56,6 +56,7 @@ def histoday(dataframe, criterio, day):
     ddf = ddf.assign(percent=ddf/sum(ddf[criterio]))
     globals()['ddf%s_%s' % (day, criterio[0:4])] = ddf
     fig = plt.figure
+    plt.tight_layout()
     ddf[criterio].plot(kind='bar')
     plt.tight_layout()
     plt.ylabel('# de Pedidos')
@@ -83,7 +84,7 @@ for i in byDay.index:
 byDay = byDay.assign(dias=pd.Series(dayCount))
 byDay = byDay.assign(prom=byDay.id_order/byDay.dias)
 byDay = byDay.assign(dia=pd.Series(diaNom))
-fig = plt.figure
+fig1 = plt.figure
 byDay.plot('dia', 'prom', kind='bar')
 plt.tight_layout()
 plt.ylabel('# de Pedidos')
