@@ -33,7 +33,7 @@ def timefix(horapedido):
               ("17", "17:00 - 18:00"), ("18", "18:00 - 19:00"),
               ("19", "11:00 - 12:00"), ("20", "20:00 - 21:00"),
               ("21", "21:00 - 22:00"), ("10", "11:00 - 12:00"),
-              ("09", "11:00 - 12:00")])
+              ("9:", "11:00 - 12:00")])
     return d[horapedido[0:2]]
 
 
@@ -68,6 +68,7 @@ def histoday(dataframe, criterio, day):
 
 for x in range(0, 7):
     globals()['df%s' % x] = df.loc[df.weekDay == x]
+    globals()['df%s' % x] = globals()['df%s' % x].reset_index(drop=True)
     nom['%s' % x] = calendar.day_name[x]
     histoday(globals()['df%s' % x], 'hora_entrega2', str(x))
     histoday(globals()['df%s' % x], 'distrito', str(x))
