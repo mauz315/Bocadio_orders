@@ -1,8 +1,7 @@
 import numpy as np
-import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import calendar
 from datetime import datetime
 
 from pandas import DataFrame
@@ -17,6 +16,8 @@ df = df.reset_index(drop=True)  # Restarting index at 0
 for i in df.index:
     if len(df.hora_entrega[i]) == 8:
         df.at[i, 'hora_entrega'] = "Express"
+    if df.distrito[i][0:3] == "Ate":
+        df.at[i, 'distrito'] = "Ate"
 
 # creating weekday filtering
 wd = []
@@ -45,10 +46,34 @@ for i in df.index:
         h_e.append(timefix(df.hora_pedido[i]))
 
 df = df.assign(hora_entrega2=pd.Series(h_e).values)  # histogram column
-
-# uni = df.fecha.nunique()
-byDay = df.groupby('weekDay')['id_order'].count()/3
-
 # Single weekday analysis
+nom = {}
+
+
+def histoday(dataframe, criterio, day):
+    fig = plt.figure
+    v = dataframe.fecha.nunique()
+    ddf = pd.DataFrame(dataframe[criterio].value_counts())
+    ddf = ddf/v
+    ddf.plot(kind='bar')
+    ddf = ddf.assign(percent=ddf/sum(ddf[criterio]))
+    globals()['ddf%s_%s' % (day, criterio[0:4])] = ddf
+    plt.xlabel(criterio)
+    # plt.ylabel('Pedidos')
+    plt.title(nom[day])
+    ax = plt.gca()
+    ax.set_ylim([0, ddf[criterio].max()+5])
+    plt.savefig('graph/%s_by_%s.png' % (nom[day][0:3], criterio[0:4]))
+    plt.tight_layout()
+    plt.show()
+
+
 for x in range(0, 7):
     globals()['df%s' % x] = df.loc[df.weekDay == x]
+    nom['%s' % x] = calendar.day_name[x]
+    histoday(globals()['df%s' % x], 'hora_entrega2', str(x))
+    histoday(globals()['df%s' % x], 'distrito', str(x))
+
+# uni = df.fecha.nunique()
+byDay = df.groupby('weekDay')['id_order'].count()
+# df6 = df6.groupby('fecha')['id_order'].count()
