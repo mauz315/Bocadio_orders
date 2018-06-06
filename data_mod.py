@@ -48,7 +48,6 @@ df = df.assign(hora_entrega2=pd.Series(h_e).values)  # histogram column
 # Single weekday analysis
 nom = {}
 
-
 def histoday(dataframe, criterio, day):
     v = dataframe.fecha.nunique()
     ddf = pd.DataFrame(dataframe[criterio].value_counts())
